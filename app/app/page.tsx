@@ -23,7 +23,7 @@ export default function FeedPage() {
     <main className="flex h-dvh min-h-0 flex-col overflow-hidden bg-[#0a0a0f] text-white">
       <header className="flex h-11 shrink-0 items-center justify-between border-b border-[#2a2a35] px-4 sm:px-6">
         <p className="text-xs font-semibold tracking-wide text-zinc-300">
-          Reel Scroll <span className="text-[#ff6b35]">1.0</span>
+          Doppy <span className="text-[#ff6b35]">1.0</span>
         </p>
         <p className="text-[11px] text-zinc-500 sm:text-xs">
           Built for doomscrollers 🤙

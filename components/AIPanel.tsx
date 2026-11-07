@@ -152,7 +152,7 @@ export default function AIPanel({ onThinkingChange }: AIPanelProps) {
     <div className="flex h-full min-h-0 flex-col">
       <header className="z-10 flex h-16 shrink-0 items-center justify-between border-b border-[#2a2a35] bg-[#0a0a0f]/95 px-5 backdrop-blur md:px-8">
         <h1 className="bg-gradient-to-r from-[#ff6b35] to-[#ffb15e] bg-clip-text text-lg font-semibold tracking-tight text-transparent">
-          ✦ Reel Scroll
+          ✦ Doppy
         </h1>
         <div className="flex items-center gap-2" aria-live="polite">
           <span
@@ -216,7 +216,7 @@ export default function AIPanel({ onThinkingChange }: AIPanelProps) {
       <div className="shrink-0 border-t border-[#2a2a35] px-5 pb-4 pt-4 md:px-8">
         <form onSubmit={sendMessage} className="mx-auto w-full max-w-2xl">
           <label htmlFor="reel-prompt" className="sr-only">
-            Message Reel Scroll
+            Message Doppy
           </label>
           <div className="flex items-end gap-3 rounded-2xl border border-[#2a2a35] bg-[#111116] p-2 pl-4 transition-colors focus-within:border-[#ff6b35]/70 motion-reduce:transition-none">
             <textarea

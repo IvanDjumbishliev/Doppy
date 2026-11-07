@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Reel Scroll",
-  description: "A new way to explore your next favorite reel.",
+  title: "Doppy",
+  description: "Your AI-powered social video discovery feed.",
 };
 
 export default function RootLayout({
