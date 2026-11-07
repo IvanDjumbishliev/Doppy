@@ -1,11 +1,16 @@
+"use client";
+
+import { useState } from "react";
 import AIPanel from "@/components/AIPanel";
 import FeedPanel from "@/components/FeedPanel";
 
 export default function FeedPage() {
+  const [isThinking, setIsThinking] = useState(false);
+
   return (
     <main className="grid h-dvh min-h-0 grid-cols-1 grid-rows-[55dvh_45dvh] overflow-hidden bg-[#0a0a0f] text-white md:grid-cols-2 md:grid-rows-1">
-      <section aria-label="AI chat" className="min-h-0 overflow-y-auto">
-        <AIPanel />
+      <section aria-label="AI chat" className="min-h-0 overflow-hidden">
+        <AIPanel onThinkingChange={setIsThinking} />
       </section>
       <section
         aria-label="Social feed"
@@ -13,6 +18,9 @@ export default function FeedPage() {
       >
         <FeedPanel />
       </section>
+      <span className="sr-only" aria-live="polite">
+        {isThinking ? "AI is thinking" : ""}
+      </span>
     </main>
   );
 }
