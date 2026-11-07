@@ -1,6 +1,6 @@
 "use client";
 
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { Bookmark, Heart, Link2, MessageCircle } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
@@ -93,6 +93,9 @@ export default function FeedPanel({ isLocked }: FeedPanelProps) {
   const [showToast, setShowToast] = useState(false);
   const [scrolledReels, setScrolledReels] = useState(0);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
+  const [currentReelIndex, setCurrentReelIndex] = useState(0);
+  const [mobileKeyboardOpen, setMobileKeyboardOpen] = useState(false);
+  const shouldReduceMotion = useReducedMotion();
   const reelListRef = useRef<HTMLDivElement>(null);
   const previousLockedRef = useRef(isLocked);
   const unlockedAtRef = useRef<number | null>(null);
@@ -155,6 +158,26 @@ export default function FeedPanel({ isLocked }: FeedPanelProps) {
     [],
   );
 
+  useEffect(() => {
+    const visualViewport = window.visualViewport;
+
+    function updateKeyboardState() {
+      const viewportHeight = visualViewport?.height ?? window.innerHeight;
+      const isMobile = window.matchMedia("(max-width: 767px)").matches;
+      setMobileKeyboardOpen(
+        isMobile && window.innerHeight - viewportHeight > 120,
+      );
+    }
+
+    updateKeyboardState();
+    window.addEventListener("resize", updateKeyboardState);
+    visualViewport?.addEventListener("resize", updateKeyboardState);
+    return () => {
+      window.removeEventListener("resize", updateKeyboardState);
+      visualViewport?.removeEventListener("resize", updateKeyboardState);
+    };
+  }, []);
+
   function handleScroll() {
     const reelList = reelListRef.current;
     if (!reelList) return;
@@ -163,6 +186,7 @@ export default function FeedPanel({ isLocked }: FeedPanelProps) {
       reels.length - 1,
       Math.floor((reelList.scrollTop + reelList.clientHeight / 2) / reelList.clientHeight),
     );
+    setCurrentReelIndex(currentIndex);
     setScrolledReels((count) => Math.max(count, currentIndex));
   }
 
@@ -198,7 +222,8 @@ export default function FeedPanel({ isLocked }: FeedPanelProps) {
                 <p className="font-semibold">{reel.username}</p>
                 <button
                   type="button"
-                  className="rounded-full border border-white/50 px-3 py-1 text-xs font-medium transition-colors hover:bg-white/15"
+                  aria-label={`Follow ${reel.username}`}
+                  className="rounded-full border border-white/50 px-3 py-1 text-xs font-medium transition-colors hover:bg-white/15 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white motion-reduce:transition-none"
                 >
                   Follow
                 </button>
@@ -221,12 +246,13 @@ export default function FeedPanel({ isLocked }: FeedPanelProps) {
             >
               {!isLocked && (
                 <motion.div
-                  className="h-full origin-left bg-[#ff6b35]"
+                  key={`${reel.id}-${currentReelIndex}`}
+                  className="h-full origin-left bg-white"
                   initial={{ scaleX: 0 }}
-                  animate={{ scaleX: [0, 1, 0] }}
+                  animate={{ scaleX: shouldReduceMotion ? 1 : [0, 1, 0] }}
                   transition={{
-                    duration: 12,
-                    repeat: Infinity,
+                    duration: shouldReduceMotion ? 0 : 15,
+                    repeat: shouldReduceMotion ? 0 : Infinity,
                     ease: "linear",
                   }}
                 />
@@ -236,7 +262,12 @@ export default function FeedPanel({ isLocked }: FeedPanelProps) {
         ))}
       </div>
 
-      <div className="pointer-events-none absolute left-4 right-4 top-4 z-10 flex items-center justify-between gap-2 md:left-6 md:right-6 md:top-6">
+      <div
+        aria-hidden={mobileKeyboardOpen}
+        className={`pointer-events-none absolute left-4 right-4 top-4 z-10 items-center justify-between gap-2 md:left-6 md:right-6 md:top-6 ${
+          mobileKeyboardOpen ? "hidden md:flex" : "flex"
+        }`}
+      >
         <div className="rounded-full border border-white/10 bg-black/35 px-3 py-1.5 text-xs text-white/80 backdrop-blur-md">
           {scrolledReels} reels scrolled
         </div>
@@ -249,17 +280,23 @@ export default function FeedPanel({ isLocked }: FeedPanelProps) {
         {isLocked && (
           <motion.div
             key="feed-lock"
-            initial={{ opacity: 0, backdropFilter: "blur(0px)" }}
+            initial={{
+              opacity: shouldReduceMotion ? 1 : 0,
+              backdropFilter: shouldReduceMotion ? "blur(8px)" : "blur(0px)",
+            }}
             animate={{ opacity: 1, backdropFilter: "blur(8px)" }}
-            exit={{ opacity: 0, backdropFilter: "blur(0px)" }}
-            transition={{ duration: 0.35, ease: "easeInOut" }}
+            exit={{
+              opacity: shouldReduceMotion ? 1 : 0,
+              backdropFilter: shouldReduceMotion ? "blur(8px)" : "blur(0px)",
+            }}
+            transition={{ duration: shouldReduceMotion ? 0 : 0.35, ease: "easeInOut" }}
             className="absolute inset-0 z-20 flex items-center justify-center bg-[#0a0a0f]/55 px-5"
           >
             <motion.div
-              initial={{ opacity: 0, y: 10 }}
+              initial={{ opacity: shouldReduceMotion ? 1 : 0, y: shouldReduceMotion ? 0 : 10 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 6 }}
-              transition={{ duration: 0.25 }}
+              exit={{ opacity: shouldReduceMotion ? 1 : 0, y: shouldReduceMotion ? 0 : 6 }}
+              transition={{ duration: shouldReduceMotion ? 0 : 0.25 }}
               className="max-w-xs text-center"
             >
               <span className="mb-4 block text-4xl" aria-hidden="true">
@@ -272,7 +309,7 @@ export default function FeedPanel({ isLocked }: FeedPanelProps) {
                 <button
                   type="button"
                   onClick={focusChat}
-                  className="mt-5 rounded-xl bg-[#ff6b35] px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#ff8052]"
+                  className="mt-5 rounded-xl bg-[#ff6b35] px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#ff8052] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white motion-reduce:transition-none"
                 >
                   Back to work
                 </button>
@@ -290,10 +327,10 @@ export default function FeedPanel({ isLocked }: FeedPanelProps) {
         {showToast && !isLocked && (
           <motion.div
             role="status"
-            initial={{ opacity: 0, y: -12 }}
+            initial={{ opacity: shouldReduceMotion ? 1 : 0, y: shouldReduceMotion ? 0 : -12 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -8 }}
-            transition={{ duration: 0.2 }}
+            exit={{ opacity: shouldReduceMotion ? 1 : 0, y: shouldReduceMotion ? 0 : -8 }}
+            transition={{ duration: shouldReduceMotion ? 0 : 0.2 }}
             className="absolute left-1/2 top-14 z-30 w-max max-w-[calc(100%-2rem)] -translate-x-1/2 rounded-full border border-emerald-400/20 bg-[#112219]/95 px-4 py-2.5 text-center text-xs font-medium text-emerald-200 shadow-xl backdrop-blur-md sm:text-sm md:top-16"
           >
             🔓 Feed unlocked — scroll while I think!
@@ -315,7 +352,7 @@ function ActionButton({
     <button
       type="button"
       aria-label={label}
-      className="flex flex-col items-center gap-1 text-xs text-white drop-shadow-md transition-transform hover:scale-110"
+      className="flex flex-col items-center gap-1 text-xs text-white drop-shadow-md transition-transform hover:scale-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white motion-reduce:transform-none motion-reduce:transition-none"
     >
       <span className="flex h-10 w-10 items-center justify-center rounded-full bg-black/20 text-white/90 backdrop-blur-sm">
         {icon}

@@ -23,7 +23,10 @@ export default function AIPanel({ onThinkingChange }: AIPanelProps) {
   useEffect(() => {
     const messageList = messageListRef.current;
     if (messageList) {
-      messageList.scrollTop = messageList.scrollHeight;
+      messageList.scrollTo({
+        top: messageList.scrollHeight,
+        behavior: "instant",
+      });
     }
   }, [messages]);
 
@@ -155,7 +158,7 @@ export default function AIPanel({ onThinkingChange }: AIPanelProps) {
           <span
             aria-hidden="true"
             className={`h-2 w-2 rounded-full ${status.color} ${
-              status.animate ? "animate-pulse" : ""
+              status.animate ? "animate-pulse motion-reduce:animate-none" : ""
             }`}
           />
           <span className="text-xs text-zinc-400">{status.label}</span>
@@ -173,9 +176,13 @@ export default function AIPanel({ onThinkingChange }: AIPanelProps) {
           <div className="flex h-full min-h-48 flex-col items-center justify-center text-center">
             <Sparkles aria-hidden="true" className="mb-4 text-[#ff6b35]" size={24} />
             <h2 className="text-xl font-semibold">What are you in the mood for?</h2>
-            <p className="mt-2 max-w-sm text-sm leading-6 text-zinc-400">
-              Ask for a vibe, a topic, or something completely unexpected.
-            </p>
+            <button
+              type="button"
+              onClick={() => setInput("Turn my notes into a client report 📊")}
+              className="mt-3 rounded-lg px-3 py-2 text-sm text-zinc-400 transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ff6b35] motion-reduce:transition-none"
+            >
+              Try: Turn my notes into a client report 📊
+            </button>
           </div>
         ) : (
           messages.map((message, index) => (
@@ -195,8 +202,9 @@ export default function AIPanel({ onThinkingChange }: AIPanelProps) {
                 {message.content ||
                   (isThinking && index === messages.length - 1 ? (
                     <span className="inline-flex items-center gap-1.5 text-zinc-500">
-                      <span className="animate-pulse">Thinking</span>
-                      <span className="animate-pulse">...</span>
+                      <span className="animate-pulse motion-reduce:animate-none">
+                        ✦ thinking...
+                      </span>
                     </span>
                   ) : null)}
               </div>
@@ -210,7 +218,7 @@ export default function AIPanel({ onThinkingChange }: AIPanelProps) {
           <label htmlFor="reel-prompt" className="sr-only">
             Message Reel Scroll
           </label>
-          <div className="flex items-end gap-3 rounded-2xl border border-[#2a2a35] bg-[#111116] p-2 pl-4 transition-colors focus-within:border-[#ff6b35]/70">
+          <div className="flex items-end gap-3 rounded-2xl border border-[#2a2a35] bg-[#111116] p-2 pl-4 transition-colors focus-within:border-[#ff6b35]/70 motion-reduce:transition-none">
             <textarea
               id="reel-prompt"
               value={input}
@@ -219,13 +227,13 @@ export default function AIPanel({ onThinkingChange }: AIPanelProps) {
               disabled={isThinking}
               rows={1}
               placeholder="Ask for anything..."
-              className="max-h-32 min-h-10 min-w-0 flex-1 resize-y bg-transparent py-2.5 text-sm text-white outline-none placeholder:text-zinc-600 disabled:opacity-60"
+              className="max-h-32 min-h-10 min-w-0 flex-1 resize-y bg-transparent py-2.5 text-sm text-white outline-none placeholder:text-zinc-600 focus-visible:ring-2 focus-visible:ring-[#ff6b35] focus-visible:ring-offset-2 focus-visible:ring-offset-[#111116] disabled:opacity-60"
             />
             <button
               type="submit"
               aria-label="Send message"
               disabled={!input.trim() || isThinking}
-              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#ff6b35] text-white transition-colors hover:bg-[#ff8052] disabled:cursor-not-allowed disabled:opacity-40"
+              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#ff6b35] text-white transition-colors hover:bg-[#ff8052] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ffb15e] disabled:cursor-not-allowed disabled:opacity-40 motion-reduce:transition-none"
             >
               <ArrowUp aria-hidden="true" size={18} />
             </button>
@@ -240,12 +248,12 @@ export default function AIPanel({ onThinkingChange }: AIPanelProps) {
             aria-checked={extendedThinking}
             aria-label="Extended thinking"
             onClick={() => setExtendedThinking((enabled) => !enabled)}
-            className={`relative h-5 w-9 rounded-full transition-colors ${
+            className={`relative h-5 w-9 rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ff6b35] motion-reduce:transition-none ${
               extendedThinking ? "bg-[#ff6b35]" : "bg-[#2a2a35]"
             }`}
           >
             <span
-              className={`absolute top-0.5 h-4 w-4 rounded-full bg-white transition-transform ${
+              className={`absolute top-0.5 h-4 w-4 rounded-full bg-white transition-transform motion-reduce:transition-none ${
                 extendedThinking ? "translate-x-4" : "translate-x-0.5"
               }`}
             />
