@@ -14,9 +14,9 @@ export default function FeedPage() {
       </section>
       <section
         aria-label="Social feed"
-        className="min-h-0 overflow-y-auto border-t border-[#2a2a35] md:border-l md:border-t-0"
+        className="min-h-0 overflow-hidden border-t border-[#2a2a35] md:border-l md:border-t-0"
       >
-        <FeedPanel />
+        <FeedPanel isLocked={!isThinking} />
       </section>
       <span className="sr-only" aria-live="polite">
         {isThinking ? "AI is thinking" : ""}
