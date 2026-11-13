@@ -25,7 +25,9 @@ Doppy is a Next.js app for AI-assisted social video discovery.
 7. Start the development server with `npm run dev`, then visit http://localhost:3000.
 
 The chat model can be changed with `GROQ_MODEL`. Never commit `.env.local` or share
-API keys. Social connections verify account identities only; Doppy does not import
-social posts or videos. Configure `APP_URL` to the canonical deployment URL outside
-local development. Until Doppy user sign-in is added, connections are scoped to a
-secure browser session cookie; clearing that cookie loses the local account links.
+API keys. Users sign in and approve access on the social platform's own OAuth page;
+Doppy never asks for or receives social account passwords. Social connections verify
+account identities only; Doppy does not import social posts or videos. Configure
+`APP_URL` to the canonical deployment URL outside local development. Until Doppy user
+sign-in is added, connections are scoped to a secure browser session cookie; clearing
+that cookie loses the local account links.

@@ -243,9 +243,10 @@ export default function Home() {
                 </p>
               )}
               <p className="mb-4 text-xs leading-5 text-zinc-500">
-                Connect to verify your account identity. Doppy does not import
-                your posts or videos. Instagram connections require a
-                professional account.
+                Sign in on each platform&apos;s secure page and approve access.
+                Doppy never receives your social password. Connections verify
+                your account identity only; Doppy does not import your posts or
+                videos. Instagram connections require a professional account.
               </p>
               <ul className="space-y-3">
                 {platforms.map(({ id, name, emoji }) => {
@@ -300,7 +301,7 @@ export default function Home() {
                               : "bg-[#ff6b35] text-white hover:bg-[#ff8052]"
                           }`}
                         >
-                          Connect
+                          Sign in
                         </a>
                       )}
                     </li>
